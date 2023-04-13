@@ -1,0 +1,5 @@
+ge.new("L", (img2.width,img2.height), 0)
+    # draw2 = ImageDraw.Draw(mask_im)
+    # draw2.ellipse((110, 20, 360, 270), fill=255)
+    # blur = mask_im.filter(ImageFilter.GaussianBlur(10))
+    # img.paste(img2, (500, 10), blur)
