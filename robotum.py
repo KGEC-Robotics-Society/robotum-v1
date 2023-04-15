@@ -2,9 +2,10 @@
 import datetime
 import discord,requests
 from PIL import Image, ImageDraw, ImageFont, ImageFilter
-# from discord.flags import Intents
 import os
 import random
+import pymongo
+import discord.utils
 from io import BytesIO
 from dotenv import load_dotenv
 from discord.ext import commands
@@ -20,10 +21,22 @@ intents.message_content = True
 robotum = commands.Bot(command_prefix=".", intents=intents, help_command=None)
 clients = discord.Client(intents=intents)
 
+#============================================= Connecting to MongoDB
+uri = os.getenv("MONGOTOKEN")
+client = pymongo.MongoClient(uri)
+mydb = client["discord"]
+mycol = mydb["member_roles"]
+
 #============================================= If bot online it will print bot is online on console
 @robotum.event
 async def on_ready():
     print('We have logged in as {0.user}'.format(robotum))
+    try:
+        client.admin.command('ping')
+        print("Pinged your deployment. You successfully connected to MongoDB!")
+    except Exception as e:
+        print(e)
+    
 
 #============================================= Checking bot is working or not
 @robotum.command()                                       
@@ -33,7 +46,7 @@ async def hello(ctx):
 #============================================= Member join welcome embed
 @robotum.event
 async def on_member_join(member):
-    channel = robotum.get_channel(869448970416582746)
+    channel = robotum.get_channel(917788968618168356)
     embed=discord.Embed(title="𝓦𝓮𝓵𝓬𝓸𝓶𝓮!",description=f"{member.mention} Just Joined The Server.")
     backgrounds =os.listdir('Images')
     random_bg = random.choice(backgrounds)
@@ -57,7 +70,7 @@ async def on_member_join(member):
         mask_im = Image.new("L", (img2.width,img2.height), 0)
         draw2 = ImageDraw.Draw(mask_im)
         center_x, center_y = (175, 175)
-        radius = 150
+        radius = 160
         left = center_x - radius
         top = center_y - radius
         right = center_x + radius
@@ -83,11 +96,81 @@ async def on_member_join(member):
 #============================================= Member left embed
 @robotum.event
 async def on_member_remove(member:discord.member):
-    channel = robotum.get_channel(869448970416582746)
+    channel = robotum.get_channel(918388896042209290)
     embed=discord.Embed(title="🥹",description=f"{member.mention} Just Left The Server.")
     embed.timestamp = datetime.datetime.now()
     await channel.send(embed=embed)
+
+#============================================= Giving role to member
+@robotum.command()                                       
+async def verify(ctx): 
+    print(ctx.author)
     
+    dbrole = mycol.find_one({"discoid" : str(ctx.author.id)})
+    dbrole2 = mycol.find_one({"discoid" : str(ctx.author)})
+    if dbrole == None and dbrole2 == None:
+        await ctx.send("Please copy your discord id and paste it on link and scan your qrcode. After scan you can give .verify command to get role. Link=")
+    elif dbrole == None:
+        await ctx.send(f"Hello @{ctx.author} Your roles are updated. Please check it out")
+        if dbrole2.get("app") == "yes":
+            app = discord.utils.get(ctx.guild.roles, name="App Development") 
+            await ctx.author.add_roles(app)
+        if dbrole2.get("iot") == "yes":
+            iot = discord.utils.get(ctx.guild.roles, name="Internet Of Things(IoT)") 
+            await ctx.author.add_roles(iot)
+        if dbrole2.get("ml") == "yes":
+            ml = discord.utils.get(ctx.guild.roles, name="Machine Learning") 
+            await ctx.author.add_roles(ml)
+        if dbrole2.get("cloud") == "yes":
+            cloud = discord.utils.get(ctx.guild.roles, name="Cloud Computing") 
+            await ctx.author.add_roles(cloud)
+        if dbrole2.get("mecatronics") == "yes":
+            mechatronics = discord.utils.get(ctx.guild.roles, name="Mechatronics") 
+            await ctx.author.add_roles(mechatronics)
+        if dbrole2.get("web") == "yes":
+            web = discord.utils.get(ctx.guild.roles, name="Web Development") 
+            await ctx.author.add_roles(web)
+        if dbrole2.get("design") == "yes":
+            design = discord.utils.get(ctx.guild.roles, name="Design Team") 
+            await ctx.author.add_roles(design)
+        if dbrole2.get("video") == "yes":
+            video = discord.utils.get(ctx.guild.roles, name="Video Editor") 
+            await ctx.author.add_roles(video)
+        if dbrole2.get("content") == "yes":
+            content = discord.utils.get(ctx.guild.roles, name="Content Writer") 
+            await ctx.author.add_roles(content)
+            
+    elif dbrole2 == None:
+        await ctx.send(f"Hello @{ctx.author} Your roles are updated. Please check it out")
+        if dbrole.get("app") == "yes":
+            app = discord.utils.get(ctx.guild.roles, name="App Development") 
+            await ctx.author.add_roles(app)
+        if dbrole.get("iot") == "yes":
+            print("yes")
+            iot = discord.utils.get(ctx.guild.roles, name="Internet Of Things(IoT)") 
+            await ctx.author.add_roles(iot)
+        if dbrole.get("ml") == "yes":
+            ml = discord.utils.get(ctx.guild.roles, name="Machine Learning") 
+            await ctx.author.add_roles(ml)
+        if dbrole.get("cloud") == "yes":
+            cloud = discord.utils.get(ctx.guild.roles, name="Cloud Computing") 
+            await ctx.author.add_roles(cloud)
+        if dbrole.get("mecatronics") == "yes":
+            mechatronics = discord.utils.get(ctx.guild.roles, name="Mechatronics") 
+            await ctx.author.add_roles(mechatronics)
+        if dbrole.get("web") == "yes":
+            web = discord.utils.get(ctx.guild.roles, name="Web Development") 
+            await ctx.author.add_roles(web)
+        if dbrole.get("design") == "yes":
+            design = discord.utils.get(ctx.guild.roles, name="Design Team") 
+            await ctx.author.add_roles(design)
+        if dbrole.get("video") == "yes":
+            video = discord.utils.get(ctx.guild.roles, name="Video Editor") 
+            await ctx.author.add_roles(video)
+        if dbrole.get("content") == "yes":
+            content = discord.utils.get(ctx.guild.roles, name="Content Writer") 
+            await ctx.author.add_roles(content)
+
 
 #============================================= Fetching token from .env
 load_dotenv()
