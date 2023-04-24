@@ -9,8 +9,6 @@ import discord.utils
 from io import BytesIO
 from dotenv import load_dotenv
 from discord.ext import commands
-# from discord.ext import *
-# from discord.ext.commands import Bot
 from keep_alive import keep_alive
 
 #============================================= Intents
@@ -41,17 +39,18 @@ async def on_ready():
 #============================================= Checking bot is working or not
 @robotum.command()                                       
 async def hello(ctx):
-    await ctx.send(f"Hello @{ctx.author}")
+    await ctx.send(f"Hello {ctx.author.mention}")
 
 #============================================= Member join welcome embed
 @robotum.event
 async def on_member_join(member):
+    community = discord.utils.get(member.guild.roles, name="Community Members") 
+    await member.add_roles(community)
     channel = robotum.get_channel(917788968618168356)
     embed=discord.Embed(title="𝓦𝓮𝓵𝓬𝓸𝓶𝓮!",description=f"{member.mention} Just Joined The Server.")
     backgrounds =os.listdir('Images')
     random_bg = random.choice(backgrounds)
     img = Image.open("Images/" + random_bg)
-    # print(random_bg)
     if member.avatar == None:
         font = ImageFont.truetype("ttf/KaushanScript-Regular.ttf", 75)
         font2 = ImageFont.truetype("ttf/KaushanScript-Regular.ttf", 80)
@@ -83,7 +82,7 @@ async def on_member_join(member):
         font2 = ImageFont.truetype("ttf/KaushanScript-Regular.ttf", 80)
         text="Welcome"
         draw=ImageDraw.Draw(img)
-        draw.text((600,300), text, (255, 255, 255), font=font, align='center')
+        draw.text((600,310), text, (255, 255, 255), font=font, align='center')
         draw.text((300,400), f"{member}", (255, 255, 255), font=font2, align='center' )
         img.save("Images/text.png")
         file = discord.File("Images/text.png", filename="Welcome.png")
@@ -106,68 +105,70 @@ async def on_member_remove(member:discord.member):
 async def verify(ctx): 
     print(ctx.author)
     
-    dbrole = mycol.find_one({"discoid" : str(ctx.author.id)})
-    dbrole2 = mycol.find_one({"discoid" : str(ctx.author)})
+    dbrole = mycol.find_one({"10" : str(ctx.author.id)})
+    dbrole2 = mycol.find_one({"10" : str(ctx.author)})
     if dbrole == None and dbrole2 == None:
         await ctx.send("Please copy your discord id and paste it on link and scan your qrcode. After scan you can give .verify command to get role. Link=")
     elif dbrole == None:
-        await ctx.send(f"Hello @{ctx.author} Your roles are updated. Please check it out")
-        if dbrole2.get("app") == "yes":
+        await ctx.send(f"Hello {ctx.author.mention} Your roles are updated. Please check it out")
+        await ctx.author.edit(nick=str(dbrole2.get("0")))
+        if dbrole2.get("1") == "yes":
             app = discord.utils.get(ctx.guild.roles, name="App Development") 
             await ctx.author.add_roles(app)
-        if dbrole2.get("iot") == "yes":
+        if dbrole2.get("2") == "yes":
             iot = discord.utils.get(ctx.guild.roles, name="Internet Of Things(IoT)") 
             await ctx.author.add_roles(iot)
-        if dbrole2.get("ml") == "yes":
+        if dbrole2.get("3") == "yes":
             ml = discord.utils.get(ctx.guild.roles, name="Machine Learning") 
             await ctx.author.add_roles(ml)
-        if dbrole2.get("cloud") == "yes":
+        if dbrole2.get("4") == "yes":
             cloud = discord.utils.get(ctx.guild.roles, name="Cloud Computing") 
             await ctx.author.add_roles(cloud)
-        if dbrole2.get("mecatronics") == "yes":
+        if dbrole2.get("5") == "yes":
             mechatronics = discord.utils.get(ctx.guild.roles, name="Mechatronics") 
             await ctx.author.add_roles(mechatronics)
-        if dbrole2.get("web") == "yes":
+        if dbrole2.get("6") == "yes":
             web = discord.utils.get(ctx.guild.roles, name="Web Development") 
             await ctx.author.add_roles(web)
-        if dbrole2.get("design") == "yes":
+        if dbrole2.get("7") == "yes":
             design = discord.utils.get(ctx.guild.roles, name="Design Team") 
             await ctx.author.add_roles(design)
-        if dbrole2.get("video") == "yes":
+        if dbrole2.get("8") == "yes":
             video = discord.utils.get(ctx.guild.roles, name="Video Editor") 
             await ctx.author.add_roles(video)
-        if dbrole2.get("content") == "yes":
+        if dbrole2.get("9") == "yes":
             content = discord.utils.get(ctx.guild.roles, name="Content Writer") 
             await ctx.author.add_roles(content)
             
     elif dbrole2 == None:
-        await ctx.send(f"Hello @{ctx.author} Your roles are updated. Please check it out")
-        if dbrole.get("app") == "yes":
+        await ctx.send(f"Hello {ctx.author.mention} Your roles are updated. Please check it out")
+        await ctx.author.edit(nick=str(dbrole2.get("0")))
+        if dbrole.get("1") == "yes":
             app = discord.utils.get(ctx.guild.roles, name="App Development") 
             await ctx.author.add_roles(app)
-        if dbrole.get("iot") == "yes":
+        if dbrole.get("2") == "yes":
             print("yes")
             iot = discord.utils.get(ctx.guild.roles, name="Internet Of Things(IoT)") 
             await ctx.author.add_roles(iot)
-        if dbrole.get("ml") == "yes":
+        if dbrole.get("3") == "yes":
             ml = discord.utils.get(ctx.guild.roles, name="Machine Learning") 
             await ctx.author.add_roles(ml)
-        if dbrole.get("cloud") == "yes":
+        if dbrole.get("4") == "yes":
             cloud = discord.utils.get(ctx.guild.roles, name="Cloud Computing") 
             await ctx.author.add_roles(cloud)
-        if dbrole.get("mecatronics") == "yes":
+        if dbrole.get("5") == "yes":
             mechatronics = discord.utils.get(ctx.guild.roles, name="Mechatronics") 
             await ctx.author.add_roles(mechatronics)
-        if dbrole.get("web") == "yes":
+        if dbrole.get("6") == "yes":
             web = discord.utils.get(ctx.guild.roles, name="Web Development") 
             await ctx.author.add_roles(web)
-        if dbrole.get("design") == "yes":
+        if dbrole.get("7") == "yes":
             design = discord.utils.get(ctx.guild.roles, name="Design Team") 
             await ctx.author.add_roles(design)
-        if dbrole.get("video") == "yes":
+        if dbrole.get("8") == "yes":
             video = discord.utils.get(ctx.guild.roles, name="Video Editor") 
             await ctx.author.add_roles(video)
-        if dbrole.get("content") == "yes":
+        if dbrole.get("9") == "yes":
             content = discord.utils.get(ctx.guild.roles, name="Content Writer") 
             await ctx.author.add_roles(content)
 
